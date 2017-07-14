@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+        <title>Change Tracking</title>
+    </head>
+    <style>
+        .key {color: blue}
+        .key2 {color: gray}
+        .ident {color:seagreen}
+        .comment {color: green;font-style:italic}
+    </style>
+    <body>
+        <h3>Change Tracking</h3>
+        Change tracking is a feature designed to help eliminate the need for many of the custom synchronization schemes that developers must often create from scratch during an applocatoion's lifetime.
+        Unlike custome systems, Change Tracking is deeply integrated into the SQL Server relational engine and designed from the ground up with performance and scalability in mind. Changes are tracked synchronously as part of the transaction in which the change is made, meaning that the list of changed rows is always up to date and consistent with actual data in the table.
+        <h3>Database level settings</h3>
+        <p><code>
+            <span class="key">alter database</span> <span class="ident">[databaseName]</span> <span class="key">set change_tracking</span> <span class="key2">=</span> <span class="key">on</span> <span class="key2">(</span><span class="key">change_retention</span> <span class="key2">=</span> 15 <span class="key">days, auto_cleanup</span> <span class="key2">=</span> <span class="key">on</span><span class="key2">);</span> <span class="comment">-- enable Change Tracking</span><br/>
+            <span class="key">alter database</span> <span class="ident">[databaseName]</span> <span class="key">set change_tracking</span> <span class="key2">=</span> <span class="key">off</span> <span class="key2">;</span> <span class="comment">-- disable Change Tracking</span><br><br/>
+            <span class="key">select</span> <span class="key2">*</span> <span class="key">from</span> <span class="ident">[sys].[change_tracking_databases]</span> <span class="comment">-- list databases Change Tracking configuration (when enabled)</span><br/>
+        </code>
+        <h3>Table-Level Configuration</h3>
+        Once Change Tracking is enabled at the database level, specific tables must be configured to participate. By default, no tables are enlisted in Change Tracking as result of the future being enabled ath the database level.
+        <p><code><span class="key">alter table</span> <span class="ident">[tableName]</span> <span class="key">enable change_tracking</span> <span class="key">with</span> <span class="key2">(</span><span class="key">track_columns_updated</span> <span class="key2">=</span> <span class="key">on</span><span class="key2">)</span><span class="comment">-- enable Change Tracking for the table</span><br/>
+        <span class="comment">-- or</span><br/>
+        <span class="key">alter table</span> <span class="ident">[tableName]</span> <span class="key">enable change_tracking</span> <span class="key">with</span> <span class="key2">(</span><span class="key">track_columns_updated</span> <span class="key2">=</span> <span class="key">off</span><span class="key2">);</span><span class="comment">-- enable Change Tracking for the table</span><br><br/>
+
+        <span class="key">alter table</span> <span class="ident">[tableName]</span> <span class="key">disable change_tracking</span><span class="key2">;</span> <span class="comment">-- disable Change Tracking for the table</span><br/><br/>
+        <span class="key">select</span> <span class="key2">*</span> <span class="key">from</span> <span class="ident">sys.change_tracking_tables</span><span class="key2">;</span> <span class="comment">-- list Change Tracking tables</span>
+        </code>
+        <h3>CHANGETABLE function</h3>
+    </body>
+</html>

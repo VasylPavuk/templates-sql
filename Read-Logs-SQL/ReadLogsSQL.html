@@ -1,0 +1,52 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+        <title>Read SQL server logs</title>
+    </head>
+    <body>
+        <h3><span style="color:blue">exec </span><span style="color:seagreen">[master].[dbo].</span><span style="color:brown">sp_enumerrorlogs</span> <span style="color:green">-- reads the list of SQL server files</span></h3>
+        Results format below:<br>
+        <table border = "1" style="border-collapse: collapse;">
+            <tr><th>Archive #</th><th>Date</th><th>Log File Size (Byte)</th></tr>
+            <tr><td>0</td><td>05/01/2014 16:34</td><td>34854904</td></tr>
+            <tr><td>1</td><td>04/30/2014 12:46</td><td>18776</td></tr>
+            <tr><td>2</td><td>04/30/2014 10:56</td><td>16602</td></tr>
+            <tr><td>3</td><td>04/29/2014 18:38</td><td>22696</td></tr>
+            <tr><td>4</td><td>04/28/2014 00:00</td><td>15552</td></tr>
+            <tr><td>5</td><td>04/24/2014 11:02</td><td>25797076</td></tr>
+            <tr><td>6</td><td>04/22/2014 13:21</td><td>16574</td></tr>
+        </table>
+        <h3><span style="color:blue">exec </span><span style="color:seagreen">[master].[dbo].</span><span style="color:brown">sp_readerrorlog</span> <span style="color:seagreen">@p1</span>=0, <span style="color:seagreen">@p2</span>=1, <span style="color:seagreen">@p3</span>=null, <span style="color:seagreen">@p4</span>=null</h3>
+        Parameters:<br>
+        <ul type="none">
+            <li>@p1 <b>Value of error log file you want to read:</b> 0 = current, 1 = Archive #1, 2 = Archive #2, etc...</li>
+            <li>@p2 <b>Log file type:</b> 1 or NULL = error log, 2 = SQL Agent log</li>
+            <li>@p3 <b>Search string 1:</b> String one you want to search for</li>
+            <li>@p4 <b>Search string 2:</b> String two you want to search for to further refine the results</li>
+        </ul>
+        Result format below:
+        <table border = "1" style="border-collapse: collapse;">
+            <tr><th>LogDate</th><th>ProcessInfo</th><th>Text</th></tr>
+            <tr><td>2014-04-30 12:49:03.370</td><td>Server</td><td>Microsoft SQL Server 2008 R2 (RTM) - 10.50.1617.0 (X64) Apr 22 2011 19:23:43 Copyright (c) Microsoft Corporation Enterprise Edition (64-bit) on Windows NT 6.1 <X64> (Build 7601: Service Pack 1)</td>
+            <tr><td>2014-04-30 12:49:03.430</td><td>Server</td><td>(c) Microsoft Corporation.</td>
+            <tr><td>2014-04-30 12:49:03.430</td><td>Server</td><td>All rights reserved.</td></tr>
+            <tr><td>2014-04-30 12:49:03.430</td><td>Server</td><td>Server process ID is 1660.</td></tr>
+            <tr><td>2014-04-30 12:49:03.440</td><td>Server</td><td>System Manufacturer: 'System manufacturer', System Model: 'System Product Name'.</td></tr>
+            <tr><td>2014-04-30 12:49:03.460</td><td>Server</td><td>Authentication mode is MIXED.</td></tr>
+            <tr><td>2014-04-30 12:49:03.460</td><td>Server</td><td>Logging SQL Server messages in file 'D:\SQLDB\MSSQL10_50.MSSQLSERVER\MSSQL\Log\ERRORLOG'.</td></tr>
+            <tr><td>2014-04-30 12:49:03.540</td><td>Server</td><td>This instance of SQL Server last reported using a process ID of 2328 at 4/30/2014 12:46:50 PM (local) 4/30/2014 9:46:50 AM (UTC). This is an informational message only; no user action is required.</td></tr>
+            <tr><td>2014-04-30 12:49:03.540</td><td>Server</td><td>Registry startup parameters:<br>&nbsp;-d D:\SQLDB\MSSQL10_50.MSSQLSERVER\MSSQL\DATA\master.mdf<br>&nbsp;-e D:\SQLDB\MSSQL10_50.MSSQLSERVER\MSSQL\Log\ERRORLOG<br>&nbsp;-l D:\SQLDB\MSSQL10_50.MSSQLSERVER\MSSQL\DATA\mastlog.ldf</td></tr>
+            <tr><td>2014-04-30 12:49:03.790</td><td>Server</td><td>SQL Server is starting at normal priority base (=7). This is an informational message only. No user action is required.</td></tr>
+            <tr><td>2014-04-30 12:49:03.790</td><td>Server</td><td>Detected 4 CPUs. This is an informational message; no user action is required.</td></tr>
+            <tr><td>2014-04-30 12:49:05.350</td><td>Server</td><td>Using locked pages for buffer pool.</td></tr>
+            <tr><td>2014-04-30 12:49:07.880</td><td>Server</td><td>Using dynamic lock allocation.  Initial allocation of 2500 Lock blocks and 5000 Lock Owner blocks per node.  This is an informational message only.  No user action is required.</td></tr>
+            <tr><td>2014-04-30 12:49:09.810</td><td>Server</td><td>Node configuration: node 0: CPU mask: 0x000000000000000f:0 Active CPU mask: 0x000000000000000f:0. This message provides a description of the NUMA configuration for this computer. This is an informational message only. No user action is required.</td></tr>
+            <tr><td>2014-04-30 12:49:11.090</td><td>spid7s</td><td>Starting up database 'master'.</td></tr>
+            <tr><td>2014-04-30 12:49:12.440</td><td>spid7s</td><td>Recovery is writing a checkpoint in database 'master' (1). This is an informational message only. No user action is required.</td></tr>
+            <tr><td>2014-04-30 12:49:14.040</td><td>spid7s</td><td>Resource governor reconfiguration succeeded.</td></tr>
+            <tr><td>2014-04-30 12:49:14.080</td><td>spid7s</td><td>SQL Server Audit is starting the audits. This is an informational message. No user action is required.</td></tr>
+            <tr><td>2014-04-30 12:49:14.100</td><td>spid7s</td><td>SQL Server Audit has started the audits. This is an informational message. No user action is required.</td></tr>
+            <tr><td>2014-04-30 12:49:14.150</td><td>spid7s</td><td>FILESTREAM: effective level = 0, configured level = 0, file system access share name = 'MSSQLSERVER'.</td></tr>
+        </table>
+    </body>
+</html>

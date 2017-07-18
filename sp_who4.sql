@@ -90,10 +90,19 @@ begin
         from    @who w
                 inner join @blk bq on w.session_id = bq.session_id;
     end;
-    declare @startTag nvarchar(max) = '<?query '+char(13)+char(10)+char(13)+char(10);
-    select  session_id,[status],command,DatabaseName,blocking_session_id,blocking_path,start_time,duration,cpu_time,reads,writes,logical_reads,granted_query_memory,
-            wait_time,last_wait_type,wait_resource,[host_name],host_process_id,[program_name],login_name,ObjectName,isolation_level,
-            [statement] = convert(xml, @startTag + [statement] + '?>'),[text] = convert(xml, @startTag+[text]+'?>')
-    from    @who
-    order by blocking_path, start_time, session_id;
+	begin try
+		declare @startTag nvarchar(max) = '<?query '+char(13)+char(10)+char(13)+char(10);
+		select  session_id,[status],command,DatabaseName,blocking_session_id,blocking_path,start_time,duration,cpu_time,reads,writes,logical_reads,granted_query_memory,
+				wait_time,last_wait_type,wait_resource,[host_name],host_process_id,[program_name],login_name,ObjectName,isolation_level,
+				[statement] = convert(xml, @startTag + [statement] + '?>'),[text] = convert(xml, @startTag+[text]+'?>')
+		from    @who
+		order by blocking_path, start_time, session_id;
+	end try
+	begin catch
+		select  session_id,[status],command,DatabaseName,blocking_session_id,blocking_path,start_time,duration,cpu_time,reads,writes,logical_reads,granted_query_memory,
+				wait_time,last_wait_type,wait_resource,[host_name],host_process_id,[program_name],login_name,ObjectName,isolation_level,
+				[statement] = [statement], [text]
+		from    @who
+		order by blocking_path, start_time, session_id;
+	end catch
 end

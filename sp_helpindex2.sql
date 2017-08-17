@@ -52,7 +52,7 @@ begin
 			left join
 			(
 				select	[object_id], [index_id], max(index_depth) index_depth, sum(page_count) page_count, max(avg_fragmentation_in_percent) avg_fragmentation_in_percent
-				from	sys.dm_db_index_physical_stats (db_id(),null,null,null,''LIMITED'')
+				from	sys.dm_db_index_physical_stats (db_id(),@ObjectId,null,null,''LIMITED'')
 				group by [object_id], [index_id]
 
 			) ips on ips.object_id = @ObjectId and i.index_id = ips.index_id

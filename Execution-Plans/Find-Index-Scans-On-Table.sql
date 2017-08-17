@@ -1,4 +1,4 @@
-declare @SchemaName sysname = N'[msg]', @TableName sysname = N'[IncomingMessage]';
+declare @SchemaName sysname = N'[sfl]', @TableName sysname = N'[SavedFilter]';
 with xmlnamespaces
     (
         default 'http://schemas.microsoft.com/sqlserver/2004/07/showplan'
@@ -13,7 +13,7 @@ from
 		order by cp.usecounts desc
 	) x
 	cross apply sys.dm_exec_sql_text(x.[plan_handle]) as st
-	cross apply
+	outer apply
 	(
 		select	sum(total_elapsed_time) total_elapsed_time, sum(total_worker_time) total_worker_time, sum(total_logical_reads) total_logical_reads, sum(total_physical_reads) total_physical_reads, sum(total_logical_writes) total_logical_writes
 		from	sys.dm_exec_query_stats qs

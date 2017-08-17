@@ -1,4 +1,3 @@
-declare @IndexName sysname = N'[PK_Organization]';
 with xmlnamespaces
     (
         default 'http://schemas.microsoft.com/sqlserver/2004/07/showplan'
@@ -9,7 +8,7 @@ from
 		select	top (20) cp.usecounts, cp.refcounts, cp.size_in_bytes, cp.cacheobjtype, cp.objtype, qp.query_plan, cp.[plan_handle]
 		from	sys.dm_exec_cached_plans cp
 				cross apply sys.dm_exec_query_plan(cp.[plan_handle]) as qp
-		where	qp.query_plan.exist('//IndexScan[@Lookup="1"]/Object[@Index=sql:variable("@IndexName")]')=1
+		where	qp.query_plan.exist('//IndexScan[@Lookup="1"]')=1
 		order by cp.usecounts desc
 	) x
 	cross apply sys.dm_exec_sql_text(x.[plan_handle]) as st

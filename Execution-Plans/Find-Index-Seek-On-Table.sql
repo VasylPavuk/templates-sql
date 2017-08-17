@@ -1,21 +1,22 @@
--- this query could be long-running
-declare @IndexName sysname = N'[IX_SavedFilter_FilterTypeId]';
+declare @IndexName sysname = N'[PK_EntityState]';
 with xmlnamespaces
     (
         default 'http://schemas.microsoft.com/sqlserver/2004/07/showplan'
     )
-select	top 20 qs.plan_handle, qs.creation_time, qs.last_execution_time, qs.execution_count, qs.total_elapsed_time/1000000.0 total_elapsed_time, qs.total_logical_reads, qp.query_plan,
-		sc.[name]+'.'+o.[name] [object_name]
+select	x.usecounts, x.refcounts, x.size_in_bytes, x.cacheobjtype, db_name(st.[dbid]) [database_name], object_name(st.[objectid], st.[dbid]) [object_name], y.total_elapsed_time,y.total_worker_time, y.total_logical_reads, y.total_physical_reads, y.total_logical_writes, x.query_plan
 from
 	(
-		select	qs.plan_handle, min(qs.creation_time) creation_time, max(qs.last_execution_time) last_execution_time, sum(qs.execution_count) execution_count, sum(qs.total_elapsed_time) total_elapsed_time, sum(qs.total_logical_reads) total_logical_reads
+		select	top (20) cp.usecounts, cp.refcounts, cp.size_in_bytes, cp.cacheobjtype, cp.objtype, qp.query_plan, cp.[plan_handle]
+		from	sys.dm_exec_cached_plans cp
+				cross apply sys.dm_exec_query_plan(cp.[plan_handle]) as qp
+		where	qp.query_plan.exist('//Object[@Index=sql:variable("@IndexName")]')=1
+		order by cp.usecounts desc
+	) x
+	cross apply sys.dm_exec_sql_text(x.[plan_handle]) as st
+	cross apply
+	(
+		select	sum(total_elapsed_time) total_elapsed_time, sum(total_worker_time) total_worker_time, sum(total_logical_reads) total_logical_reads, sum(total_physical_reads) total_physical_reads, sum(total_logical_writes) total_logical_writes
 		from	sys.dm_exec_query_stats qs
-		group by qs.plan_handle
-	) qs
-		cross apply sys.dm_exec_query_plan(qs.[plan_handle]) as qp
-		cross apply sys.dm_exec_sql_text(qs.[plan_handle]) as st
-		inner join sys.objects o on st.objectid = o.[object_id]
-		inner join sys.schemas sc on o.[schema_id] = sc.[schema_id]
-where	qp.query_plan.exist('//Object[@Index=sql:variable("@IndexName")]')=1
-order by qs.execution_count desc;
--- dbcc freeproccache(0x0500050000B5765DD067677F0500000001000000000000000000000000000000000000000000000000000000) -- qs.plan_handle as parameter
+		where	x.plan_handle = qs.plan_handle
+	) y
+order by x.usecounts desc

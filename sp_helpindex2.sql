@@ -26,7 +26,7 @@ begin
 				from	sys.index_columns ic
 						inner join sys.columns c on c.[object_id] = @ObjectId and c.column_id = ic.column_id
 				where	ic.[object_id] = @ObjectId and ic.index_id = i.index_id and ic.is_included_column = 0
-				order by ic.index_column_id
+				order by ic.key_ordinal
 				for xml path('''')
 			), 1,2,''''),
 			included_columns = stuff(
@@ -35,7 +35,7 @@ begin
 				from	sys.index_columns ic
 						inner join sys.columns c on c.[object_id] = @ObjectId and c.column_id = ic.column_id
 				where	ic.[object_id] = @ObjectId and ic.index_id = i.index_id and ic.is_included_column = 1
-				order by ic.index_column_id
+				order by ic.key_ordinal
 				for xml path('''')
 			), 1,2,''''),
 			-- located = ds.[name]+N'' (''+ds.[type]+N'')'' collate database_default,

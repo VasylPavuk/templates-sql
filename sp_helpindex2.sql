@@ -41,6 +41,7 @@ begin
 			-- located = ds.[name]+N'' (''+ds.[type]+N'')'' collate database_default,
 			ips.index_depth, ips.page_count, p.rows, p.partitions, ips.avg_fragmentation_in_percent,
 			ius.user_seeks, ius.user_scans, ius.user_lookups, ius.user_updates,
+            i.fill_factor,
 			UsageRate = convert(float, ius.user_seeks+ius.user_scans+ius.user_lookups)/(CASE WHEN ius.user_updates > 0 THEN convert(float, ius.user_updates) ELSE 1.0 END)
 			$ReuildCMD
 			$ReorganizeCMD

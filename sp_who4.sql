@@ -10,7 +10,8 @@ CREATE procedure sp_who4
  as
 begin
     set nocount on;
-    select  s.session_id, [status] = coalesce(r.[status], s.[status]), r.command, [database_name] = d.[name], r.blocking_session_id, blocking_path = convert(varchar(1024), ''), r.start_time,
+    select  s.session_id, [status] = coalesce(r.[status], s.[status]), r.command, [database_name] = d.[name], r.blocking_session_id,
+	    blocking_path = convert(varchar(1024), ''), r.start_time,
 	    duration = convert(time, getdate()-r.start_time, 114),
             r.cpu_time, r.reads, r.writes, r.logical_reads, r.granted_query_memory, r.wait_time, r.last_wait_type, r.wait_resource,
             s.[host_name], s.host_process_id, s.[program_name], s.login_name, --ObjectName=object_name(t.objectid, t.[dbid]),

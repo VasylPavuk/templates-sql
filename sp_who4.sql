@@ -50,8 +50,8 @@ begin
     if exists(select * from #who where blocking_session_id > 0)
         begin
             insert  into #who
-            select  s.session_id, [status] = s.[status], command = null, [database_name] = null, blocking_session_id= 0, blocking_path = convert(varchar(1024), ''), start_time = s.last_request_start_time, duration = convert(time, getdate()-s.last_request_
-start_time, 114),
+            select  s.session_id, [status] = s.[status], command = null, [database_name] = null, blocking_session_id= 0, blocking_path = convert(varchar(1024), ''), start_time = s.last_request_start_time, 
+	            duration = convert(time, getdate()-s.last_request_start_time, 114),
                     cpu_time = null, reads = null, writes = null, logical_reads = null, granted_query_memory = null, wait_time = null, last_wait_type = null, wait_resource = null,
                     s.[host_name], s.host_process_id, s.[program_name], s.login_name, --ObjectName=object_name(t.objectid, t.[dbid]),
                     s.transaction_isolation_level,

@@ -10,7 +10,8 @@ CREATE procedure sp_who4
  as
 begin
     set nocount on;
-    select  s.session_id, [status] = coalesce(r.[status], s.[status]), r.command, [database_name] = d.[name], r.blocking_session_id, blocking_path = convert(varchar(1024), ''), r.start_time, duration = convert(time, getdate()-r.start_time, 114),
+    select  s.session_id, [status] = coalesce(r.[status], s.[status]), r.command, [database_name] = d.[name], r.blocking_session_id, blocking_path = convert(varchar(1024), ''), r.start_time,
+	    duration = convert(time, getdate()-r.start_time, 114),
             r.cpu_time, r.reads, r.writes, r.logical_reads, r.granted_query_memory, r.wait_time, r.last_wait_type, r.wait_resource,
             s.[host_name], s.host_process_id, s.[program_name], s.login_name, --ObjectName=object_name(t.objectid, t.[dbid]),
             s.transaction_isolation_level,
@@ -125,11 +126,11 @@ start_time, 114),
 
     set lock_timeout 5;
     begin try
-        select  w.session_id, qsx.query_plan, qp.node_id, qp.row_count, qp.estimate_row_count, qp.physical_operator_name
+        select  w.session_id, qsx.query_plan--, qp.node_id, qp.row_count, qp.estimate_row_count, qp.physical_operator_name
         from    #who w
                 cross apply sys.dm_exec_query_statistics_xml(w.session_id) qsx
-                inner join sys.dm_exec_query_profiles qp on w.session_id = qp.session_id
-        order by w.session_id asc, qp.node_id asc;
+                --inner join sys.dm_exec_query_profiles qp on w.session_id = qp.session_id
+        order by w.session_id asc--, qp.node_id asc;
     end try
     begin catch
         select 'Lock timeout to get the additional information' as [Message]
